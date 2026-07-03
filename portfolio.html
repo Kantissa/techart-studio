@@ -271,6 +271,19 @@
       gap: 1.25rem;
       margin-bottom: 3rem;
     }
+    .cat-item {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+    }
+    .cat-item-title {
+      font-family: 'Cinzel', serif;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-align: center;
+      letter-spacing: .06em;
+    }
     .cat-card {
       position: relative;
       aspect-ratio: 4/3;
@@ -315,7 +328,7 @@
       color: var(--cream);
     }
     @media(max-width:900px) { #cat-nav { grid-template-columns: repeat(2,1fr); } }
-    @media(max-width:480px) { #cat-nav { grid-template-columns: repeat(2,1fr); gap:.75rem; } }
+    @media(max-width:480px) { #cat-nav { grid-template-columns: repeat(2,1fr); gap:.75rem; } .cat-item-title { font-size: .78rem; } }
     /* Collage intérieur */
     .cat-collage { display:flex; gap:2px; width:100%; height:100%; }
     .cat-col { flex:1; overflow:hidden; display:flex; flex-direction:column; gap:2px; min-width:0; }
@@ -916,48 +929,60 @@
   <div id="cat-nav" aria-label="Naviguer par catégorie">
 
     <!-- Branding -->
-    <a href="branding.html" class="cat-card hoverable reveal" aria-label="Voir Branding">
-      <div class="cat-card-visual">
-        <img src="assets/couverture branding.png" alt="Branding" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
-      </div>
-      <div class="cat-card-overlay">
-        <div class="cat-card-label">Branding</div>
-        <div class="cat-card-title">Identités &amp; Chartes</div>
-      </div>
-    </a>
+    <div class="cat-item reveal">
+      <h3 class="cat-item-title">Identités &amp; Chartes</h3>
+      <a href="branding.html" class="cat-card hoverable" aria-label="Voir Branding">
+        <div class="cat-card-visual">
+          <img src="assets/couverture branding.png" alt="Branding" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+        </div>
+        <div class="cat-card-overlay">
+          <div class="cat-card-label">Branding</div>
+          <div class="cat-card-title">Identités &amp; Chartes</div>
+        </div>
+      </a>
+    </div>
 
     <!-- Design -->
-    <a href="design.html" class="cat-card hoverable reveal" aria-label="Voir Design">
-      <div class="cat-card-visual">
-        <img src="assets/couverture affiche logo.png" alt="Design" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
-      </div>
-      <div class="cat-card-overlay">
-        <div class="cat-card-label">Design</div>
-        <div class="cat-card-title">Logos &amp; Affiches</div>
-      </div>
-    </a>
+    <div class="cat-item reveal">
+      <h3 class="cat-item-title">Logos &amp; Affiches</h3>
+      <a href="design.html" class="cat-card hoverable" aria-label="Voir Design">
+        <div class="cat-card-visual">
+          <img src="assets/couverture affiche logo.png" alt="Design" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+        </div>
+        <div class="cat-card-overlay">
+          <div class="cat-card-label">Design</div>
+          <div class="cat-card-title">Logos &amp; Affiches</div>
+        </div>
+      </a>
+    </div>
 
     <!-- Web -->
-    <a href="web.html" class="cat-card hoverable reveal" aria-label="Voir Web">
-      <div class="cat-card-visual">
-        <img src="assets/couverture site internet.png" alt="Web" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
-      </div>
-      <div class="cat-card-overlay">
-        <div class="cat-card-label">Web</div>
-        <div class="cat-card-title">Sites Internet</div>
-      </div>
-    </a>
+    <div class="cat-item reveal">
+      <h3 class="cat-item-title">Sites Internet</h3>
+      <a href="web.html" class="cat-card hoverable" aria-label="Voir Web">
+        <div class="cat-card-visual">
+          <img src="assets/couverture site internet.png" alt="Web" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+        </div>
+        <div class="cat-card-overlay">
+          <div class="cat-card-label">Web</div>
+          <div class="cat-card-title">Sites Internet</div>
+        </div>
+      </a>
+    </div>
 
     <!-- Vidéo -->
-    <a href="video.html" class="cat-card hoverable reveal" aria-label="Voir Vidéo">
-      <div class="cat-card-visual">
-        <img src="assets/couverture video.png" alt="Vidéo" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
-      </div>
-      <div class="cat-card-overlay">
-        <div class="cat-card-label">Vidéo</div>
-        <div class="cat-card-title">Productions Vidéo</div>
-      </div>
-    </a>
+    <div class="cat-item reveal">
+      <h3 class="cat-item-title">Vidéo</h3>
+      <a href="video.html" class="cat-card hoverable" aria-label="Voir Vidéo">
+        <div class="cat-card-visual">
+          <img src="assets/couverture video.png" alt="Vidéo" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+        </div>
+        <div class="cat-card-overlay">
+          <div class="cat-card-label">Vidéo</div>
+          <div class="cat-card-title">Productions Vidéo</div>
+        </div>
+      </a>
+    </div>
 
   </div><!-- /cat-nav -->
 
