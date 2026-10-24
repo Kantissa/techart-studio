@@ -15,6 +15,10 @@
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Montserrat:wght@600;700;800&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
       rel="stylesheet"
     />
+    <script>
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+        document.documentElement.classList.add("motion-ok");
+    </script>
 
     <style>
       /* ─── Variables ─────────────────────────────────────────── */
@@ -338,9 +342,6 @@
           inset 0 0 0 1px var(--gold),
           0 6px 20px rgba(201, 146, 42, 0.3);
       }
-      .nav-cta:active {
-        transform: scale(0.96);
-      }
       .nav-cta::after {
         display: none !important;
       }
@@ -400,10 +401,6 @@
         height: 1px;
         background: var(--gold);
         margin-bottom: 3rem;
-      }
-      .reveal {
-        opacity: 0;
-        transform: translateY(32px);
       }
 
       /* ─── Buttons ────────────────────────────────────────────── */
@@ -530,7 +527,6 @@
       .hero-logo {
         width: 280px;
         margin: 0 auto 2.2rem;
-        opacity: 0;
         will-change: transform;
       }
       .hero-eyebrow {
@@ -541,7 +537,6 @@
         text-transform: uppercase;
         color: var(--gold);
         margin-bottom: 1.75rem;
-        opacity: 0;
       }
       .hero-title {
         font-family: "Cinzel", serif;
@@ -550,7 +545,6 @@
         line-height: 1.1;
         color: var(--cream);
         margin-bottom: 0.8rem;
-        opacity: 0;
         text-wrap: balance;
       }
       .hero-title .italic-gold {
@@ -565,14 +559,12 @@
         font-style: italic;
         color: rgba(241, 235, 223, 0.55);
         margin-bottom: 3rem;
-        opacity: 0;
       }
       .hero-ctas {
         display: flex;
         gap: 1rem;
         justify-content: center;
         flex-wrap: wrap;
-        opacity: 0;
       }
       .scroll-hint {
         position: absolute;
@@ -584,7 +576,6 @@
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
-        opacity: 0;
         pointer-events: none;
       }
       .scroll-hint span {
@@ -635,17 +626,7 @@
         font-weight: 300;
         text-wrap: pretty;
       }
-      .word {
-        display: inline-block;
-        overflow: hidden;
-        vertical-align: bottom;
-      }
-      .word-inner {
-        display: inline-block;
-        transform: translateY(110%);
-        opacity: 0;
-      }
-      .word.gold-word .word-inner {
+      .word.gold-word {
         color: var(--gold);
       }
 
@@ -955,20 +936,10 @@
         height: 44px;
         margin: 0 auto 1.5rem;
         color: var(--gold);
+        transition: transform 0.7s cubic-bezier(0.2, 0, 0, 1);
       }
       .val-card:hover .val-icon {
-        animation: spinDiamond 0.65s ease-out forwards;
-      }
-      @keyframes spinDiamond {
-        0% {
-          transform: rotate(0deg) scale(1);
-        }
-        50% {
-          transform: rotate(180deg) scale(1.12);
-        }
-        100% {
-          transform: rotate(360deg) scale(1);
-        }
+        transform: perspective(400px) rotateY(180deg) scale(1.06);
       }
       .val-num {
         font-family: "Montserrat", sans-serif;
@@ -1019,9 +990,25 @@
         gap: 1.4rem;
       }
       .form-group {
+        position: relative;
         display: flex;
         flex-direction: column;
         gap: 0.45rem;
+      }
+      .form-group::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: var(--gold-light);
+        transform: scaleX(0);
+        transition: transform 0.45s cubic-bezier(0.2, 0, 0, 1);
+        pointer-events: none;
+      }
+      .form-group:focus-within::after {
+        transform: scaleX(1);
       }
       .form-group label {
         font-family: "Montserrat", sans-serif;
@@ -1074,6 +1061,31 @@
         flex-wrap: wrap;
         gap: 2rem;
         margin-top: 0.5rem;
+      }
+      #submit-btn {
+        display: inline-grid;
+      }
+      #submit-btn .btn-label {
+        grid-area: 1 / 1;
+        text-align: center;
+        transition:
+          opacity 0.3s cubic-bezier(0.2, 0, 0, 1),
+          transform 0.3s cubic-bezier(0.2, 0, 0, 1),
+          filter 0.3s cubic-bezier(0.2, 0, 0, 1);
+      }
+      #submit-btn .btn-label-done,
+      #submit-btn.is-sent .btn-label-idle {
+        opacity: 0;
+        transform: translateY(8px);
+        filter: blur(4px);
+      }
+      #submit-btn.is-sent .btn-label-idle {
+        transform: translateY(-8px);
+      }
+      #submit-btn.is-sent .btn-label-done {
+        opacity: 1;
+        transform: none;
+        filter: none;
       }
       .social-row {
         display: flex;
@@ -1184,6 +1196,7 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="motion.css" />
   </head>
   <body>
     <!-- ══ Cursor ════════════════════════════════════════════════ -->
@@ -1660,9 +1673,9 @@
         Nous en ferons quelque chose de <em>précieux</em>.
       </p>
 
-      <form class="contact-form reveal" id="contact-form" novalidate>
+      <form class="contact-form" id="contact-form" novalidate>
         <div class="form-row">
-          <div class="form-group">
+          <div class="form-group reveal">
             <label for="f-name">Votre nom</label>
             <input
               type="text"
@@ -1673,7 +1686,7 @@
               autocomplete="name"
             />
           </div>
-          <div class="form-group">
+          <div class="form-group reveal">
             <label for="f-email">Email</label>
             <input
               type="email"
@@ -1686,7 +1699,7 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group reveal">
           <label for="f-service">Service souhaité</label>
           <select id="f-service" name="service">
             <option value="" disabled selected>Sélectionner un service</option>
@@ -1698,7 +1711,7 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group reveal">
           <label for="f-message">Votre vision</label>
           <textarea
             id="f-message"
@@ -1708,7 +1721,7 @@
           ></textarea>
         </div>
 
-        <div class="form-bottom">
+        <div class="form-bottom reveal">
           <div class="social-row">
             <a
               href="https://www.facebook.com"
@@ -1765,7 +1778,10 @@
           </div>
 
           <button type="submit" class="btn-primary hoverable" id="submit-btn">
-            Envoyer le projet
+            <span class="btn-label btn-label-idle">Envoyer le projet</span>
+            <span class="btn-label btn-label-done" aria-hidden="true"
+              >◈ Message envoyé</span
+            >
           </button>
         </div>
       </form>
@@ -1781,9 +1797,11 @@
     </footer>
 
     <!-- ══ Scripts ════════════════════════════════════════════════ -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+    <script src="motion.js"></script>
 
     <script>
       "use strict";
@@ -1896,13 +1914,14 @@
           return p;
         });
 
+        // Mouvement réduit : une seule image fixe, pas de boucle.
         function tick() {
           ctx.clearRect(0, 0, W, H);
           particles.forEach((p) => {
-            p.update();
+            if (!window.reduceMotion) p.update();
             p.draw();
           });
-          raf = requestAnimationFrame(tick);
+          if (!window.reduceMotion) raf = requestAnimationFrame(tick);
         }
         tick();
 
@@ -1963,181 +1982,11 @@
             e.preventDefault();
             gsap.to(window, {
               scrollTo: { y: target, offsetY: 75 },
-              duration: 1.1,
+              duration: window.reduceMotion ? 0 : 1.1,
               ease: "power3.inOut",
             });
           });
         });
-      })();
-
-      /* ── Hero Entrance ───────────────────────────────────────────── */
-      (function initHero() {
-        const tl = gsap.timeline({
-          delay: 0.3,
-          defaults: { ease: "power3.out" },
-        });
-
-        tl.fromTo(
-          ".hero-logo",
-          { opacity: 0, y: -28, scale: 0.85 },
-          { opacity: 1, y: 0, scale: 1, duration: 1.3 },
-        )
-          .fromTo(
-            ".hero-eyebrow",
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: 0.8 },
-            "-=.7",
-          )
-          .fromTo(
-            ".hero-title",
-            { opacity: 0, y: 50 },
-            { opacity: 1, y: 0, duration: 1 },
-            "-=.5",
-          )
-          .fromTo(
-            ".hero-subtitle",
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 0.8 },
-            "-=.5",
-          )
-          .fromTo(
-            ".hero-ctas",
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 0.8 },
-            "-=.45",
-          )
-          .fromTo(
-            ".scroll-hint",
-            { opacity: 0 },
-            { opacity: 1, duration: 0.7 },
-            "-=.2",
-          );
-
-        gsap.to(".hero-logo", {
-          y: -12,
-          duration: 3,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-          delay: 1.5,
-        });
-      })();
-
-      /* ── Parallax Hero ────────────────────────────────────────────── */
-      (function initParallax() {
-        gsap.to(".hero-content", {
-          y: () => window.innerHeight * 0.28,
-          ease: "none",
-          scrollTrigger: {
-            trigger: "#hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
-        gsap.to("#particles-canvas", {
-          y: () => window.innerHeight * 0.15,
-          ease: "none",
-          scrollTrigger: {
-            trigger: "#hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
-      })();
-
-      /* ── Scroll Reveal ────────────────────────────────────────────── */
-      (function initScrollReveal() {
-        const staggered = new Set();
-
-        document
-          .querySelectorAll(".services-grid, .val-grid, .pf-grid")
-          .forEach((grid) => {
-            const items = grid.querySelectorAll(".reveal");
-            items.forEach((el) => staggered.add(el));
-            gsap.fromTo(
-              items,
-              { opacity: 0, y: 36 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.9,
-                ease: "power3.out",
-                stagger: 0.1,
-                scrollTrigger: {
-                  trigger: grid,
-                  start: "top 87%",
-                  toggleActions: "play none none none",
-                },
-              },
-            );
-          });
-
-        gsap.utils.toArray(".reveal").forEach((el) => {
-          if (staggered.has(el)) return;
-          gsap.fromTo(
-            el,
-            { opacity: 0, y: 36 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.9,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: el,
-                start: "top 87%",
-                toggleActions: "play none none none",
-              },
-            },
-          );
-        });
-      })();
-
-      /* ── Manifeste Word-by-Word ──────────────────────────────────── */
-      (function initManifeste() {
-        const el = document.getElementById("manifeste-text");
-        if (!el) return;
-
-        const GOLD_WORDS = new Set([
-          "technologie",
-          "art",
-          "lumière",
-          "intuition",
-          "ambition",
-          "outil",
-          "exigence",
-        ]);
-
-        const raw = el.innerText.trim().replace(/\s+/g, " ").split(" ");
-        el.innerHTML = raw
-          .map((w) => {
-            const clean = w
-              .normalize("NFD")
-              .replace(/[̀-ͯ]/g, "")
-              .replace(/[^a-zA-Z]/g, "")
-              .toLowerCase();
-            const gold = GOLD_WORDS.has(clean) ? " gold-word" : "";
-            return `<span class="word${gold}"><span class="word-inner">${w}</span></span>`;
-          })
-          .join(" ");
-
-        gsap.fromTo(
-          el.querySelectorAll(".word-inner"),
-          { y: "110%", opacity: 0 },
-          {
-            y: "0%",
-            opacity: 1,
-            duration: 0.65,
-            stagger: 0.038,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 82%",
-              toggleActions: "play none none none",
-            },
-          },
-        );
       })();
 
       /* ── Form Submit ──────────────────────────────────────────────── */
@@ -2146,14 +1995,22 @@
         const btn = document.getElementById("submit-btn");
         if (!form || !btn) return;
 
+        const idle = btn.querySelector(".btn-label-idle");
+        const done = btn.querySelector(".btn-label-done");
+
+        function setSent(sent) {
+          btn.classList.toggle("is-sent", sent);
+          idle.setAttribute("aria-hidden", String(sent));
+          done.setAttribute("aria-hidden", String(!sent));
+        }
+
         form.addEventListener("submit", (e) => {
           e.preventDefault();
-          const orig = btn.textContent;
-          btn.textContent = "◈ Message envoyé";
+          setSent(true);
           btn.style.background = "linear-gradient(135deg, #2a7a4a, #3da05e)";
           btn.disabled = true;
           setTimeout(() => {
-            btn.textContent = orig;
+            setSent(false);
             btn.style.background = "";
             btn.disabled = false;
             form.reset();

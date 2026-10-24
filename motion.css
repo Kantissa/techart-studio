@@ -1,0 +1,330 @@
+/* ═══════════════════════════════════════════════════════════════
+   TechArt Studio — Motion layer (partagé par toutes les pages)
+   Les états cachés ne s'appliquent que sous .motion-ok, classe posée
+   dans <head> uniquement si le visiteur accepte les animations.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* ─── Transitions entre pages (View Transitions API) ────────── */
+@view-transition {
+  navigation: auto;
+}
+#navbar {
+  view-transition-name: site-nav;
+}
+::view-transition-old(root) {
+  animation: ta-vt-out 0.22s var(--ease-in) both;
+}
+::view-transition-new(root) {
+  animation: ta-vt-in 0.55s var(--ease-out) 0.06s both;
+}
+@keyframes ta-vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    filter: blur(4px);
+  }
+}
+@keyframes ta-vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* ─── États initiaux (avant animation) ──────────────────────── */
+.motion-ok .reveal,
+.motion-ok .hero-corner,
+.motion-ok .hero-logo,
+.motion-ok .hero-eyebrow,
+.motion-ok .hero-title,
+.motion-ok .hero-subtitle,
+.motion-ok .hero-ctas,
+.motion-ok .scroll-hint,
+.motion-ok .hero-avatar,
+.motion-ok .page-eyebrow,
+.motion-ok .hero-identity-name,
+.motion-ok .hero-identity-role,
+.motion-ok .hero-contact,
+.motion-ok .hero-bio,
+.motion-ok .hero-tool-badge,
+.motion-ok .cat-page-hero > * {
+  opacity: 0;
+}
+.motion-ok .manifeste-body .word {
+  opacity: 0.16;
+}
+.m-step-icon {
+  display: inline-block;
+}
+
+.corner-tl { transform-origin: top left; }
+.corner-tr { transform-origin: top right; }
+.corner-bl { transform-origin: bottom left; }
+.corner-br { transform-origin: bottom right; }
+
+/* ─── Barre de progression du scroll ────────────────────────── */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 950;
+  background: var(--grad-gold);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  #scroll-progress {
+    animation: ta-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+  @keyframes ta-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
+/* ─── Boutons : reflet doré, magnétisme, pression ───────────── */
+.btn-primary,
+.btn-secondary,
+#lb-link {
+  translate: var(--mag-x, 0px) var(--mag-y, 0px);
+}
+.btn-primary,
+#lb-link {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-primary::after,
+#lb-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 246, 220, 0.5) 50%,
+    transparent 70%
+  );
+  transform: translateX(-110%);
+  pointer-events: none;
+}
+.btn-primary:hover::after,
+#lb-link:hover::after {
+  transform: translateX(110%);
+  transition: transform 0.8s var(--ease-out);
+}
+.btn-primary,
+.btn-secondary {
+  transition-timing-function: var(--ease-out);
+}
+
+.nav-cta {
+  transition:
+    background 0.3s,
+    color 0.3s,
+    box-shadow 0.3s,
+    scale 0.15s ease-out !important;
+}
+.nav-cta:active,
+#lb-link:active,
+.back-link:active {
+  scale: 0.96;
+}
+#lb-link {
+  transition:
+    filter 0.3s,
+    scale 0.15s ease-out;
+}
+.lb-close,
+.lb-nav {
+  transition:
+    border-color 0.3s,
+    color 0.3s,
+    background 0.3s,
+    scale 0.15s ease-out;
+}
+.lb-close:active,
+.lb-nav:active {
+  scale: 0.96;
+}
+
+/* ─── Liens fléchés ─────────────────────────────────────────── */
+.back-link::before,
+.overlay-view::before {
+  display: inline-block;
+  transition: transform 0.35s var(--ease-out);
+}
+.back-link:hover::before {
+  transform: translateX(-4px);
+}
+.design-card:hover .overlay-view::before {
+  transform: translateX(4px);
+}
+
+/* ─── Cards : halo qui suit le curseur ──────────────────────── */
+.s-card,
+.val-card,
+.pf-item,
+.design-card,
+.cat-card {
+  transition-timing-function: var(--ease-out);
+}
+.spot {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(232, 184, 75, 0.13),
+    transparent 62%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+}
+:is(.s-card, .val-card, .pf-item, .design-card, .cat-card):hover > .spot {
+  opacity: 1;
+}
+
+/* ─── Overlays de cards : contenu en cascade ────────────────── */
+@media (hover: hover) {
+  .pf-overlay > *,
+  .card-overlay > *,
+  .cat-card-overlay > * {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.2s var(--ease-in),
+      transform 0.2s var(--ease-in);
+  }
+  :is(.pf-item, .design-card, .cat-card):hover
+    :is(.pf-overlay, .card-overlay, .cat-card-overlay)
+    > * {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.5s var(--ease-out),
+      transform 0.5s var(--ease-out);
+  }
+  :is(.pf-item, .design-card, .cat-card):hover
+    :is(.pf-overlay, .card-overlay, .cat-card-overlay)
+    > :nth-child(2) {
+    transition-delay: 0.06s;
+  }
+  :is(.pf-item, .design-card, .cat-card):hover
+    :is(.pf-overlay, .card-overlay, .cat-card-overlay)
+    > :nth-child(3) {
+    transition-delay: 0.12s;
+  }
+}
+.cat-card-title::after {
+  content: "→";
+  display: inline-block;
+  margin-left: 0.4rem;
+  color: var(--gold);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity 0.3s var(--ease-out),
+    transform 0.4s var(--ease-out);
+}
+.cat-card:hover .cat-card-title::after {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─── Badges outils (portfolio) ─────────────────────────────── */
+.hero-tool-badge {
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    color 0.25s,
+    box-shadow 0.35s var(--ease-out);
+}
+.hero-tool-badge:hover {
+  box-shadow: 0 0 18px rgba(201, 146, 42, 0.28);
+}
+
+/* ─── Hero des pages catégorie : ligne dorée ────────────────── */
+.cat-page-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent 70%);
+  transform: scaleX(var(--line, 1));
+  transform-origin: left center;
+  pointer-events: none;
+}
+.motion-ok .cat-page-hero {
+  --line: 0;
+}
+#visible-count {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Lightbox : ouverture marquée, fermeture discrète ──────── */
+#lightbox,
+#pdf-lb {
+  transition: opacity 0.15s var(--ease-in);
+}
+#lightbox.open,
+#pdf-lb.open {
+  transition: opacity 0.3s var(--ease-out);
+}
+#lightbox .lb-inner,
+#pdf-lb .pdf-lb-inner {
+  transform: scale(0.96);
+  filter: blur(4px);
+  transition:
+    transform 0.15s var(--ease-in),
+    filter 0.15s var(--ease-in);
+}
+#lightbox.open .lb-inner,
+#pdf-lb.open .pdf-lb-inner {
+  transform: none;
+  filter: none;
+  transition:
+    transform 0.4s var(--ease-out),
+    filter 0.4s var(--ease-out);
+}
+
+/* ─── Mouvement réduit ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  #cursor-ring {
+    display: none;
+  }
+  #lightbox .lb-inner,
+  #pdf-lb .pdf-lb-inner {
+    transform: none;
+    filter: none;
+  }
+}
