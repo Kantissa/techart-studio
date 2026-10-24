@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Montserrat:wght@600;700;800&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('motion-ok');</script>
 
   <style>
     /* ── Variables ─────────────────────────────────────────── */
@@ -64,7 +65,7 @@
     .nav-cta:hover { background:var(--gold)!important; color:var(--bg)!important; }
     .nav-cta::after { display:none!important; }
     .hamburger { display:none; flex-direction:column; gap:5px; padding:4px; }
-    .hamburger span { display:block; width:24px; height:1.5px; background:var(--cream); transition:all .3s; }
+    .hamburger span { display:block; width:24px; height:1.5px; background:var(--cream); transition:transform .3s, opacity .3s; }
 
     /* ── Page Hero ──────────────────────────────────────────── */
     #page-hero {
@@ -354,7 +355,7 @@
       font-size:.6rem;
       letter-spacing:.18em;
       text-transform:uppercase;
-      transition:all .3s;
+      transition:border-color .3s, color .3s, background .3s;
     }
     .filter-btn:hover, .filter-btn.active {
       border-color:var(--gold);
@@ -794,9 +795,6 @@
       color:rgba(241,235,223,.28);
     }
 
-    /* ── Common ─────────────────────────────────────────────── */
-    .reveal { opacity:0; transform:translateY(28px); }
-
     /* ── Footer ─────────────────────────────────────────────── */
     footer {
       padding:2.5rem 5%;
@@ -826,6 +824,7 @@
       .design-grid.mode-design { grid-template-columns:repeat(2,1fr); }
     }
   </style>
+  <link rel="stylesheet" href="motion.css">
 </head>
 <body>
 
@@ -1412,9 +1411,11 @@
 </footer>
 
 <!-- Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollToPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script src="motion.js"></script>
 <script>
 'use strict';
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -1455,22 +1456,9 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
     l.addEventListener('click',e=>{
       const id=l.getAttribute('href');if(id==='#')return;
       const t=document.querySelector(id);if(!t)return;
-      e.preventDefault();gsap.to(window,{scrollTo:{y:t,offsetY:75},duration:1.1,ease:'power3.inOut'});
+      e.preventDefault();gsap.to(window,{scrollTo:{y:t,offsetY:75},duration:window.reduceMotion?0:1.1,ease:'power3.inOut'});
     });
   });
-})();
-
-/* ── Hero Entrance ───────────────────────────────────────────── */
-(function(){
-  const tl=gsap.timeline({delay:.25,defaults:{ease:'power3.out'}});
-  tl.fromTo('.hero-corner',       {opacity:0},          {opacity:1,duration:.6,stagger:.12})
-    .fromTo('.hero-avatar',       {opacity:0,x:-30,scale:.9},{opacity:1,x:0,scale:1,duration:.9,ease:'back.out(1.4)'},'-=.4')
-    .fromTo('.page-eyebrow',      {opacity:0,y:10},     {opacity:1,y:0,duration:.55},'-=.5')
-    .fromTo('.hero-identity-name',{opacity:0,y:35},     {opacity:1,y:0,duration:.85},'-=.4')
-    .fromTo('.hero-identity-role',{opacity:0,y:18},     {opacity:1,y:0,duration:.6}, '-=.4')
-    .fromTo('.hero-contact',      {opacity:0,y:16},     {opacity:1,y:0,duration:.6}, '-=.4')
-    .fromTo('.hero-bio',          {opacity:0,y:14},     {opacity:1,y:0,duration:.6}, '-=.35')
-    .fromTo('.hero-tool-badge',   {opacity:0,y:10,scale:.9},{opacity:1,y:0,scale:1,duration:.45,stagger:.07,ease:'back.out(1.2)'},'-=.3');
 })();
 
 /* ── Typewriter ──────────────────────────────────────────────── */
@@ -1479,6 +1467,12 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
   const el=document.getElementById('tw-text');
   if(!el)return;
   let ri=0,ci=0,del=false;
+  // Mouvement réduit : les rôles se remplacent sans effet de frappe.
+  if(window.reduceMotion){
+    el.textContent=roles[0];
+    setInterval(()=>{ri=(ri+1)%roles.length;el.textContent=roles[ri];},2600);
+    return;
+  }
   function type(){
     const cur=roles[ri];
     if(!del){
@@ -1492,14 +1486,6 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
     }
   }
   setTimeout(type,1400);
-})();
-
-/* ── Scroll Reveal ────────────────────────────────────────────── */
-(function(){
-  gsap.utils.toArray('.reveal').forEach(el=>{
-    gsap.fromTo(el,{opacity:0,y:28},{opacity:1,y:0,duration:.85,ease:'power3.out',
-      scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'}});
-  });
 })();
 
 /* cat-nav → navigation directe via <a href> sur chaque card */
